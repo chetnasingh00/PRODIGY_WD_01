@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LARA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fafafa;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.98);
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .navbar.scrolled {
+            padding: 15px 8%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 500;
+            color: #333;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            background: #333;
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-top: 80px;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.1)), 
+                        url('https://www.charriol.com/cdn/shop/files/website-2023-04-banner-watch-stropez-cruise-002.jpg?v=1693504657&width=2000') center/cover no-repeat;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 400;
+            color: #333;
+        }
+
+        .hero p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border: 1px solid #333;
+            color: #333;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #3E2723;
+            color: #fff;
+            border-color: #3E2723;
+        }
+
+        /* Sections */
+        .section {
+            padding: 80px 8%;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 60px;
+            font-weight: 400;
+            color: #333;
+        }
+        
+        /* About Section */
+        .about-content {
+            display: flex;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            color: #555;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .about-image {
+            flex: 1;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Collections */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .collection-card {
+            position: relative;
+            height: 450px;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .collection-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .collection-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1;
+        }
+
+        .collection-card:hover::before {
+            opacity: 1;
+        }
+
+        .collection-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .collection-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: #fff;
+            z-index: 2;
+        }
+
+        .collection-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .collection-info p {
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .collection-card .btn {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .collection-card:hover .btn {
+            background: #3E2723;
+            border-color: #3E2723;
+        }
+
+        /* Reviews Section */
+        .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .review-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .rating {
+            color: #D4AF37;
+            font-size: 1.5rem;
+            margin: 15px 0;
+        }
+
+        .review-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .customer-name {
+            font-weight: 500;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: #f9f9f9;
+            padding: 80px 8% 40px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #333;
+        }
+
+        .copyright {
+            color: #999;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .about-image {
+                width: 100%;
+                height: 400px;
+                margin-top: 30px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+                justify-content: flex-end;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .reviews-container {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 15px 5%;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 10px;
+                font-size: 11px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .collection-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="#" class="logo">LARA</a>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#pastel">Pastel</a></li>
+            <li><a href="#old-money">Old Money</a></li>
+            <li><a href="#collections">Collections</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Timeless Elegance</h1>
+            <p>Discover watches that transcend trends with our carefully curated collections of minimalist timepieces.</p>
+            <a href="#collections" class="btn">View Collections</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <h2 class="section-title">Our Story</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>Founded in 2015, LARA was born from a desire to create watches that blend minimalist design with exceptional craftsmanship. Each timepiece is designed to be both functional and beautiful, becoming a cherished part of your daily life.</p>
+                <p>Our collections range from soft pastel designs that bring a touch of whimsy to your wardrobe, to our Old Money aesthetic pieces that evoke timeless sophistication. Every watch is made with ethically sourced materials and designed to last for generations.</p>
+                <p>At LARA, we believe a watch should be more than just a timekeeper - it should be a reflection of personal style and a companion for life's most meaningful moments.</p>
+            </div>
+            <div class="about-image">
+                <img src="https://i.pinimg.com/736x/c0/96/cc/c096cc704f0e5dc96cfdb9dd5acb175f.jpg" alt="LARA Watch Craftsmanship">
+            </div>
+        </div>
+    </section>
+
+    <!-- Pastel Collection -->
+    <section class="section" id="pastel">
+        <h2 class="section-title">Pastel Collection</h2>
+        <div class="collection-grid">
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/c8/c0/aa/c8c0aa1ad036dc0d79e9b95ebfa3efe1.jpg" alt="Blush Pink Watch">
+                <div class="collection-info">
+                    <h3>Blush</h3>
+                    <p>Elegant Pink watch with rose gold accents</p>
+                    <a href="#" class="btn" style="color: #fff; border-color: #fff;">Shop Now</a>
+                </div>
+            </div>
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/6e/c8/66/6ec866ac6911531ca9c64f3bba90b360.jpg" alt="Sky Blue Watch">
+                <div class="collection-info">
+                    <h3>Sky</h3>
+                    <p>Soft blue face with silver-tone case</p>
+                    <a href="#" class="btn" style="color: #fff; border-color: #fff;">Shop Now</a>
+                </div>
+            </div>
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/12/82/c6/1282c6e8125a288f725fab68900f634e.jpg" alt="Mint Green Watch">
+                <div class="collection-info">
+                    <h3>Mint</h3>
+                    <p>Fresh green dial with gold-tone markers</p>
+                    <a href="#" class="btn" style="color: #fff; border-color: #fff;">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Old Money Collection -->
+    <section class="section" id="old-money">
+        <h2 class="section-title">Old Money Aesthetic</h2>
+        <div class="collection-grid">
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/57/ed/a1/57eda1a536d1efdeb66d270cb8db50cf.jpg" alt="Heritage Gold Watch">
+                <div class="collection-info">
+                    <h3>Heritage</h3>
+                    <p>18k gold case with champagne dial</p>
+                    <a href="#" class="btn" style="color: #fff; border-color: #fff;">Shop Now</a>
+                </div>
+            </div>
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/95/3f/45/953f45c33a8f0f4b4af7479978ddd577.jpg" alt="Gentlewoman Watch">
+                <div class="collection-info">
+                    <h3>Gentlewoman</h3>
+                    <p>Crocodile leather strap with silver case</p>
+                    <a href="#" class="btn" style="color: #fff; border-color: #fff;">Shop Now</a>
+                </div>
+            </div>
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/df/4b/6d/df4b6d116e308c75d34197f41af37033.jpg" alt="Pearlescence Watch">
+                <div class="collection-info">
+                    <h3>Pearlescence</h3>
+                    <p>Mother-of-pearl dial with diamond markers</p>
+                    <a href="#" class="btn" style="color: #fff; border-color: #fff;">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Collections -->
+    <section class="section" id="collections">
+        <h2 class="section-title">All Collections</h2>
+        <div class="collection-grid">
+            <div class="collection-card">
+                <img src="https://asset.swarovski.com/images/c_crop,g_xy_center,w_4532,h_5664,x_2260,y_3438/dpr_auto,f_auto,q_auto,c_lfill,w_759,h_950/swa-cms/250213_SWAROVSKI_MIAMI_RESHOOT_02_166_600DPI_CMYK/.jpg" alt="Pastel Collection">
+                <div class="collection-info">
+                    <h3>Pastel</h3>
+                    <a href="#pastel" class="btn" style="color: #fff; border-color: #fff;">View Collection</a>
+                </div>
+            </div>
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/5a/81/88/5a818855a69f2480b4705b24aa303f4f.jpg" alt="Classic Collection">
+                <div class="collection-info">
+                    <h3>Old Money</h3>
+                    <a href="#old-money" class="btn" style="color: #fff; border-color: #fff;">View Collection</a>
+                </div>
+            </div>
+            <div class="collection-card">
+                <img src="https://i.pinimg.com/736x/4c/42/2c/4c422cc6ac6a0e5cfc879b7d25ec5d0a.jpg" alt="Limited Edition">
+                <div class="collection-info">
+                    <h3>Limited Editions</h3>
+                    <a href="#contact" class="btn" style="color: #fff; border-color: #fff;">Inquire</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="section" id="reviews">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <div class="reviews-container">
+            <div class="review-card">
+                <div class="rating">★★★★★</div>
+                <p class="review-text">"The most beautiful watch I've ever owned. The craftsmanship is exceptional."</p>
+                <p class="customer-name">- Emma</p>
+            </div>
+            <div class="review-card">
+                <div class="rating">★★★★★</div>
+                <p class="review-text">"Elegant, timeless, and worth every penny. My LARA watch gets compliments daily."</p>
+                <p class="customer-name">- Lia</p>
+            </div>
+            <div class="review-card">
+                <div class="rating">★★★★</div>
+                <p class="review-text">"I love the pastel collection! The perfect blend of modern and classic style."</p>
+                <p class="customer-name">- Sophia </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-links">
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+            <a href="#">Contact Us</a>
+            <a href="#">Stores</a>
+            <a href="#">Shipping</a>
+            <a href="#">Returns</a>
+        </div>
+        <p class="copyright">© 2023 LARA Watches. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling and active link highlighting
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Update active link on scroll
+        const sections = document.querySelectorAll('section');
+        window.addEventListener('scroll', function() {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
